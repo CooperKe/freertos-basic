@@ -184,6 +184,16 @@ void test_command(int n, char *argv[]) {
     }
 
     host_action(SYS_CLOSE, handle);
+	
+    
+    int n1 = -1, n2 = 1, sum = 0, m = 10; 
+    for(int i = 0; i <= m; i++)
+    {
+	sum = n1 + n2;
+	n1 = n2;
+	n2 = sum;
+	fio_printf(1, "F%d: %d\n\r",i ,sum);
+    }	
 }
 
 void _command(int n, char *argv[]){
