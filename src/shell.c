@@ -25,6 +25,8 @@ void host_command(int, char **);
 void mmtest_command(int, char **);
 void test_command(int, char **);
 void _command(int, char **);
+void new_command(int, char **);
+void vTaskCode(void *);
 
 #define MKCL(n, d) {.name=#n, .fptr=n ## _command, .desc=d}
 
@@ -37,6 +39,7 @@ cmdlist cl[]={
 	MKCL(mmtest, "heap memory allocation test"),
 	MKCL(help, "help"),
 	MKCL(test, "test new function"),
+	MKCL(new, "Create new FreeRTOS task"),
 	MKCL(, ""),
 };
 
@@ -199,6 +202,30 @@ void test_command(int n, char *argv[]) {
 void _command(int n, char *argv[]){
     (void)n; (void)argv;
     fio_printf(1, "\r\n");
+}
+
+void new_command(int n, char *argv[]){
+    static unsigned char ucParameterToPass;
+    xTaskHandle xHandle = NULL;
+
+    xTaskCreate(vTaskCode, (signed portCHAR *) "NOP", 100, &ucParameterToPass, 
+	tskIDLE_PRIORITY, &xHandle);
+    configASSERT(xHandle);
+
+    if(xHandle != NULL)
+    {
+	//vTaskDelete( xHandle );
+    }
+
+    fio_printf(1, "\r\n");
+}
+
+void vTaskCode(void *pvParameters)
+{
+    for(;;)
+    {
+	/*Task code goes here.*/
+    }
 }
 
 cmdfunc *do_command(const char *cmd){
