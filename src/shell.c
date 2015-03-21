@@ -27,6 +27,7 @@ void test_command(int, char **);
 void _command(int, char **);
 void new_command(int, char **);
 void vTaskCode(void *);
+int StrToInt(char *);
 
 #define MKCL(n, d) {.name=#n, .fptr=n ## _command, .desc=d}
 
@@ -204,19 +205,25 @@ void _command(int n, char *argv[]){
     fio_printf(1, "\r\n");
 }
 
-void new_command(int n, char *argv[]){
-    static unsigned char ucParameterToPass;
-    xTaskHandle xHandle = NULL;
-
-    xTaskCreate(vTaskCode, (signed portCHAR *) "NOP", 100, &ucParameterToPass, 
-	tskIDLE_PRIORITY, &xHandle);
-    configASSERT(xHandle);
-
-    if(xHandle != NULL)
+int StrToInt(char *str)
+{
+    int n = 0;
+    while (*str != 0)
     {
-	//vTaskDelete( xHandle );
+	int c = *str - '0';
+	n = n*10 + c;
+	++str;
     }
+    return n;
+}
 
+void new_command(int n, char *argv[]){
+/* Create a task to vTaskCode */
+    //int priorityNum = StrToInt(argv[2]);
+
+    xTaskCreate(vTaskCode, (signed portCHAR *) "NOP", 512/*stack size*/, NULL, tskIDLE_PRIORITY+1, NULL);
+
+    fio_printf(2, "\r\nCreate a task is success");	
     fio_printf(1, "\r\n");
 }
 
@@ -224,7 +231,7 @@ void vTaskCode(void *pvParameters)
 {
     for(;;)
     {
-	/*Task code goes here.*/
+	/*Here can do something*/
     }
 }
 
